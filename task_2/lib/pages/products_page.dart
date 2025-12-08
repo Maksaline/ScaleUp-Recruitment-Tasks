@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:task_2/pages/widgets/products_card.dart';
 
@@ -155,12 +154,11 @@ class _ProductsPageState extends State<ProductsPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const SizedBox(height: 12),
-
                                 SizedBox(
                                   height: 40,
                                   child: ListView.builder(
                                     scrollDirection: Axis.horizontal,
-                                    itemCount: isLoading ? 8 : categories.length,
+                                    itemCount: isLoading ? 6 : categories.length,
                                     itemBuilder: (context, index) {
                                       final String categoryName = isLoading ? 'Category' : categories[index];
                                       return Padding(
@@ -195,7 +193,7 @@ class _ProductsPageState extends State<ProductsPage> {
                                     },
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                const SizedBox(height: 6),
                                 GridView.builder(
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
