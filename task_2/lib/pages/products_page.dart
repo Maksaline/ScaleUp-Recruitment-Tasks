@@ -13,6 +13,7 @@ class ProductsPage extends StatefulWidget {
 class _ProductsPageState extends State<ProductsPage> {
 
   List<String> categories = [];
+  int selectedIndex = 0;
 
   @override
   void initState() {
@@ -145,22 +146,141 @@ class _ProductsPageState extends State<ProductsPage> {
                           );
                         }
                         else if (state is ProductsLoaded) {
-                          return GridView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.7,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                            ),
-                            itemCount: state.products.length,
-                            itemBuilder: (context, index) {
-                              return Container(
-                                height: 50,
-                                child: Text(state.products[index].title),
-                              );
-                            }
+                          categories = state.categories;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 10),
+                              SizedBox(
+                                height: 30,
+                                child: ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: state.categories.length,
+                                  itemBuilder: (context, index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedIndex = index;
+                                        });
+                                        context.read<ProductsCubit>().filterProducts(state.categories[index]);
+                                      },
+                                      child: Container(
+                                        margin: EdgeInsets.only(right: 5),
+                                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                        decoration: BoxDecoration(
+                                          color: selectedIndex == index ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: selectedIndex == index ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onError,
+                                            width: 0.2
+                                          )
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            state.categories[index],
+                                            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                                              color: selectedIndex == index ? Theme.of(context).colorScheme.secondary : Theme.of(context).colorScheme.onSurface,
+                                            )
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              GridView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.7,
+                                  crossAxisSpacing: 10,
+                                ),
+                                itemCount: state.products.length,
+                                itemBuilder: (context, index) {
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.only(top: 10),
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(10),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.grey.withAlpha(60),
+                                              spreadRadius: 0.1,
+                                              blurRadius: 0.2,
+                                              offset: Offset(0, 2),
+                                            )
+                                          ],
+                                          color: Theme.of(context).colorScheme.secondary,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Expanded(
+                                              child: Image.network(
+                                                state.products[index].image,
+                                                width: double.infinity,
+                                                fit: BoxFit.contain,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              state.products[index].title,
+                                              style: Theme.of(context).textTheme.labelMedium,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(height: 5),
+                                            Row(
+                                              children: [
+                                                Icon(Icons.star, color: Colors.amber, size: 16),
+                                                SizedBox(width: 5),
+                                                Text(state.products[index].rating.toString(), style: Theme.of(context).textTheme.labelSmall),
+                                                SizedBox(width: 5,),
+                                                Text('(${state.products[index].count})', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.grey),)
+                                              ],
+                                            ),
+                                            SizedBox(height: 5),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Text('\$${state.products[index].price}', style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold)),
+                                                Container(
+                                                  padding: EdgeInsets.all(5),
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: Theme.of(context).colorScheme.primary.withAlpha(25),
+                                                    shape: BoxShape.circle
+                                                  ),
+                                                  child: Icon(
+                                                    Icons.shopping_bag_outlined, color: Theme.of(context).colorScheme.primary, size: 15,
+                                                  ),
+                                                )
+                                              ],
+                                            )
+                                          ]
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 15,
+                                        right: 5,
+                                        child: Container(
+                                          padding: EdgeInsets.all(5),
+                                          decoration: BoxDecoration(
+                                            color: Theme.of(context).colorScheme.surface.withAlpha(250),
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                          child: Text(state.products[index].category, style: Theme.of(context).textTheme.labelSmall),
+                                        )
+                                      )
+                                    ],
+                                  );
+                                }
+                              ),
+                            ],
                           );
                         }
                         else {

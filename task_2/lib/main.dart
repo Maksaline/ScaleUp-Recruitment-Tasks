@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
             labelMedium: GoogleFonts.poppins(
-              color: Colors.black54,
+              color: textDark,
               fontWeight: FontWeight.w500,
             ),
             labelSmall: GoogleFonts.poppins(color: textMedium),

@@ -22,8 +22,8 @@ class ProductsCubit extends Cubit<ProductsState> {
 
       if (response.statusCode == 200) {
         allProducts = (response.data as List).map((json) => Product.fromJson(json)).toList();
-
         categories = allProducts.map((product) => product.category).toSet().toList();
+        categories.insert(0, 'All');
 
         emit(ProductsLoaded(allProducts, categories));
       } else {
@@ -31,6 +31,14 @@ class ProductsCubit extends Cubit<ProductsState> {
       }
     } catch (e) {
       emit(ProductsError("Failed to load products: ${e.toString()}"));
+    }
+  }
+  void filterProducts(String category) {
+    if (category == 'All') {
+      emit(ProductsLoaded(allProducts, categories));
+    } else {
+      final filteredProducts = allProducts.where((product) => product.category == category).toList();
+      emit(ProductsLoaded(filteredProducts, categories));
     }
   }
 }
