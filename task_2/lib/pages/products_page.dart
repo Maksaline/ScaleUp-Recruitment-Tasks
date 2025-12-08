@@ -136,6 +136,9 @@ class _ProductsPageState extends State<ProductsPage> {
                           ),
                         ),
                         style: Theme.of(context).textTheme.labelSmall,
+                        onChanged: (value) {
+                          context.read<ProductsCubit>().searchProducts(value);
+                        },
                       ),
                     ),
                     BlocBuilder<ProductsCubit, ProductsState>(
@@ -150,7 +153,7 @@ class _ProductsPageState extends State<ProductsPage> {
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(height: 10),
+                              SizedBox(height: 12),
                               SizedBox(
                                 height: 30,
                                 child: ListView.builder(
@@ -188,6 +191,7 @@ class _ProductsPageState extends State<ProductsPage> {
                                   },
                                 ),
                               ),
+                              SizedBox(height: 6),
                               GridView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),

@@ -33,11 +33,21 @@ class ProductsCubit extends Cubit<ProductsState> {
       emit(ProductsError("Failed to load products: ${e.toString()}"));
     }
   }
+
   void filterProducts(String category) {
     if (category == 'All') {
       emit(ProductsLoaded(allProducts, categories));
     } else {
       final filteredProducts = allProducts.where((product) => product.category == category).toList();
+      emit(ProductsLoaded(filteredProducts, categories));
+    }
+  }
+
+  void searchProducts(String query) {
+    if (query.isEmpty) {
+      emit(ProductsLoaded(allProducts, categories));
+    } else {
+      final filteredProducts = allProducts.where((product) => product.title.toLowerCase().contains(query.toLowerCase())).toList();
       emit(ProductsLoaded(filteredProducts, categories));
     }
   }
