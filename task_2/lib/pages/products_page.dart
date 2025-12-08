@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../cubits/products_cubit.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -8,6 +11,14 @@ class ProductsPage extends StatefulWidget {
 }
 
 class _ProductsPageState extends State<ProductsPage> {
+
+  List<String> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ProductsCubit>().fetchProducts();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -63,7 +74,9 @@ class _ProductsPageState extends State<ProductsPage> {
                                 size: 32,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                context.read<ProductsCubit>().fetchProducts();
+                              },
                             ),
                             IconButton(
                               icon: Icon(
@@ -124,11 +137,42 @@ class _ProductsPageState extends State<ProductsPage> {
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ),
+                    BlocBuilder<ProductsCubit, ProductsState>(
+                      builder: (context, state) {
+                        if (state is ProductsLoading) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        else if (state is ProductsLoaded) {
+                          return GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.7,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            itemCount: state.products.length,
+                            itemBuilder: (context, index) {
+                              return Container(
+                                height: 50,
+                                child: Text(state.products[index].title),
+                              );
+                            }
+                          );
+                        }
+                        else {
+                          return Text('Error');
+                        }
+                      }
+                    )
                   ],
                 ),
               ),
             ),
-            SliverFillRemaining()
+            // SliverFillRemaining()
           ],
         ),
       ),
