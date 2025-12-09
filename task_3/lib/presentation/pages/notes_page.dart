@@ -49,7 +49,13 @@ class _NotesPageState extends State<NotesPage> {
                   builder: (context, notesState) {
                     return Row(
                       children: [
-                        if(notesState is NotesSyncing) Icon(Icons.sync, color: Theme.of(context).colorScheme.secondary,),
+                        if(notesState is NotesSyncing)
+                          IconButton(
+                            icon:  Icon(Icons.sync, color: Theme.of(context).colorScheme.secondary,),
+                            onPressed: () {
+                              context.read<NotesCubit>().fetchNotes();
+                            },
+                          ),
                         SizedBox(width: 10,),
                         BlocBuilder<ConnectivityBloc, ConnectivityState>(
                           builder: (context, state) {
