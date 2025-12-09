@@ -13,7 +13,10 @@ class ColorList {
     list.add(NoteColor(id: 5, color: Colors.teal.shade300));
   }
 
-  Color getColor(int id) {
+  Color getColor(int id, BuildContext context) {
+    if(id == 0) {
+      return Theme.of(context).colorScheme.onSecondary;
+    }
     return list.firstWhere((element) => element.id == id).color;
   }
 

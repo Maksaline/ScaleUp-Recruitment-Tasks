@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_3/core/theme/theme_cubit.dart';
+import 'package:task_3/presentation/cubits/notes_cubit.dart';
 import 'package:task_3/presentation/pages/notes_page.dart';
 
 void main() {
@@ -16,7 +17,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => ThemeCubit())
+        BlocProvider(create: (context) => ThemeCubit()),
+        BlocProvider(create: (context) => NotesCubit()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeData>(
         builder: (context, theme) {

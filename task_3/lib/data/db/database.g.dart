@@ -53,6 +53,15 @@ class $NoteItemsTable extends NoteItems
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<int> status = GeneratedColumn<int>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
   static const VerificationMeta _updatedMeta = const VerificationMeta(
     'updated',
   );
@@ -65,7 +74,14 @@ class $NoteItemsTable extends NoteItems
     requiredDuringInsert: false,
   );
   @override
-  List<GeneratedColumn> get $columns => [id, title, content, colorId, updated];
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    content,
+    colorId,
+    status,
+    updated,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -105,6 +121,14 @@ class $NoteItemsTable extends NoteItems
     } else if (isInserting) {
       context.missing(_colorIdMeta);
     }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
     if (data.containsKey('updated')) {
       context.handle(
         _updatedMeta,
@@ -140,6 +164,11 @@ class $NoteItemsTable extends NoteItems
             DriftSqlType.int,
             data['${effectivePrefix}color_id'],
           )!,
+      status:
+          attachedDatabase.typeMapping.read(
+            DriftSqlType.int,
+            data['${effectivePrefix}status'],
+          )!,
       updated: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}updated'],
@@ -158,12 +187,14 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
   final String title;
   final String content;
   final int colorId;
+  final int status;
   final DateTime? updated;
   const NoteItem({
     required this.id,
     required this.title,
     required this.content,
     required this.colorId,
+    required this.status,
     this.updated,
   });
   @override
@@ -173,6 +204,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
     map['title'] = Variable<String>(title);
     map['content'] = Variable<String>(content);
     map['color_id'] = Variable<int>(colorId);
+    map['status'] = Variable<int>(status);
     if (!nullToAbsent || updated != null) {
       map['updated'] = Variable<DateTime>(updated);
     }
@@ -185,6 +217,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
       title: Value(title),
       content: Value(content),
       colorId: Value(colorId),
+      status: Value(status),
       updated:
           updated == null && nullToAbsent
               ? const Value.absent()
@@ -202,6 +235,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
       title: serializer.fromJson<String>(json['title']),
       content: serializer.fromJson<String>(json['content']),
       colorId: serializer.fromJson<int>(json['colorId']),
+      status: serializer.fromJson<int>(json['status']),
       updated: serializer.fromJson<DateTime?>(json['updated']),
     );
   }
@@ -213,6 +247,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
       'title': serializer.toJson<String>(title),
       'content': serializer.toJson<String>(content),
       'colorId': serializer.toJson<int>(colorId),
+      'status': serializer.toJson<int>(status),
       'updated': serializer.toJson<DateTime?>(updated),
     };
   }
@@ -222,12 +257,14 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
     String? title,
     String? content,
     int? colorId,
+    int? status,
     Value<DateTime?> updated = const Value.absent(),
   }) => NoteItem(
     id: id ?? this.id,
     title: title ?? this.title,
     content: content ?? this.content,
     colorId: colorId ?? this.colorId,
+    status: status ?? this.status,
     updated: updated.present ? updated.value : this.updated,
   );
   NoteItem copyWithCompanion(NoteItemsCompanion data) {
@@ -236,6 +273,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
       title: data.title.present ? data.title.value : this.title,
       content: data.content.present ? data.content.value : this.content,
       colorId: data.colorId.present ? data.colorId.value : this.colorId,
+      status: data.status.present ? data.status.value : this.status,
       updated: data.updated.present ? data.updated.value : this.updated,
     );
   }
@@ -247,13 +285,14 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
           ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('colorId: $colorId, ')
+          ..write('status: $status, ')
           ..write('updated: $updated')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, title, content, colorId, updated);
+  int get hashCode => Object.hash(id, title, content, colorId, status, updated);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -262,6 +301,7 @@ class NoteItem extends DataClass implements Insertable<NoteItem> {
           other.title == this.title &&
           other.content == this.content &&
           other.colorId == this.colorId &&
+          other.status == this.status &&
           other.updated == this.updated);
 }
 
@@ -270,12 +310,14 @@ class NoteItemsCompanion extends UpdateCompanion<NoteItem> {
   final Value<String> title;
   final Value<String> content;
   final Value<int> colorId;
+  final Value<int> status;
   final Value<DateTime?> updated;
   const NoteItemsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.content = const Value.absent(),
     this.colorId = const Value.absent(),
+    this.status = const Value.absent(),
     this.updated = const Value.absent(),
   });
   NoteItemsCompanion.insert({
@@ -283,15 +325,18 @@ class NoteItemsCompanion extends UpdateCompanion<NoteItem> {
     required String title,
     required String content,
     required int colorId,
+    required int status,
     this.updated = const Value.absent(),
   }) : title = Value(title),
        content = Value(content),
-       colorId = Value(colorId);
+       colorId = Value(colorId),
+       status = Value(status);
   static Insertable<NoteItem> custom({
     Expression<int>? id,
     Expression<String>? title,
     Expression<String>? content,
     Expression<int>? colorId,
+    Expression<int>? status,
     Expression<DateTime>? updated,
   }) {
     return RawValuesInsertable({
@@ -299,6 +344,7 @@ class NoteItemsCompanion extends UpdateCompanion<NoteItem> {
       if (title != null) 'title': title,
       if (content != null) 'content': content,
       if (colorId != null) 'color_id': colorId,
+      if (status != null) 'status': status,
       if (updated != null) 'updated': updated,
     });
   }
@@ -308,6 +354,7 @@ class NoteItemsCompanion extends UpdateCompanion<NoteItem> {
     Value<String>? title,
     Value<String>? content,
     Value<int>? colorId,
+    Value<int>? status,
     Value<DateTime?>? updated,
   }) {
     return NoteItemsCompanion(
@@ -315,6 +362,7 @@ class NoteItemsCompanion extends UpdateCompanion<NoteItem> {
       title: title ?? this.title,
       content: content ?? this.content,
       colorId: colorId ?? this.colorId,
+      status: status ?? this.status,
       updated: updated ?? this.updated,
     );
   }
@@ -334,6 +382,9 @@ class NoteItemsCompanion extends UpdateCompanion<NoteItem> {
     if (colorId.present) {
       map['color_id'] = Variable<int>(colorId.value);
     }
+    if (status.present) {
+      map['status'] = Variable<int>(status.value);
+    }
     if (updated.present) {
       map['updated'] = Variable<DateTime>(updated.value);
     }
@@ -347,6 +398,7 @@ class NoteItemsCompanion extends UpdateCompanion<NoteItem> {
           ..write('title: $title, ')
           ..write('content: $content, ')
           ..write('colorId: $colorId, ')
+          ..write('status: $status, ')
           ..write('updated: $updated')
           ..write(')'))
         .toString();
@@ -370,6 +422,7 @@ typedef $$NoteItemsTableCreateCompanionBuilder =
       required String title,
       required String content,
       required int colorId,
+      required int status,
       Value<DateTime?> updated,
     });
 typedef $$NoteItemsTableUpdateCompanionBuilder =
@@ -378,6 +431,7 @@ typedef $$NoteItemsTableUpdateCompanionBuilder =
       Value<String> title,
       Value<String> content,
       Value<int> colorId,
+      Value<int> status,
       Value<DateTime?> updated,
     });
 
@@ -407,6 +461,11 @@ class $$NoteItemsTableFilterComposer
 
   ColumnFilters<int> get colorId => $composableBuilder(
     column: $table.colorId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get status => $composableBuilder(
+    column: $table.status,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -445,6 +504,11 @@ class $$NoteItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get updated => $composableBuilder(
     column: $table.updated,
     builder: (column) => ColumnOrderings(column),
@@ -471,6 +535,9 @@ class $$NoteItemsTableAnnotationComposer
 
   GeneratedColumn<int> get colorId =>
       $composableBuilder(column: $table.colorId, builder: (column) => column);
+
+  GeneratedColumn<int> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
 
   GeneratedColumn<DateTime> get updated =>
       $composableBuilder(column: $table.updated, builder: (column) => column);
@@ -508,12 +575,14 @@ class $$NoteItemsTableTableManager
                 Value<String> title = const Value.absent(),
                 Value<String> content = const Value.absent(),
                 Value<int> colorId = const Value.absent(),
+                Value<int> status = const Value.absent(),
                 Value<DateTime?> updated = const Value.absent(),
               }) => NoteItemsCompanion(
                 id: id,
                 title: title,
                 content: content,
                 colorId: colorId,
+                status: status,
                 updated: updated,
               ),
           createCompanionCallback:
@@ -522,12 +591,14 @@ class $$NoteItemsTableTableManager
                 required String title,
                 required String content,
                 required int colorId,
+                required int status,
                 Value<DateTime?> updated = const Value.absent(),
               }) => NoteItemsCompanion.insert(
                 id: id,
                 title: title,
                 content: content,
                 colorId: colorId,
+                status: status,
                 updated: updated,
               ),
           withReferenceMapper:
