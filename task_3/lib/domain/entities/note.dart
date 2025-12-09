@@ -8,13 +8,13 @@ enum Status {
 
 class Note extends Equatable{
   final int id;
-  String title;
-  String content;
-  int colorId;
-  DateTime? updated;
-  Status status;
+  final String title;
+  final String content;
+  final int colorId;
+  final DateTime? updated;
+  final Status status;
 
-  Note ({
+  const Note ({
     required this.id,
     required this.title,
     required this.content,

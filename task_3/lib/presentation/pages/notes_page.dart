@@ -23,7 +23,7 @@ class _NotesPageState extends State<NotesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
@@ -31,7 +31,8 @@ class _NotesPageState extends State<NotesPage> {
           );
         },
         backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(Icons.add, color: Theme.of(context).colorScheme.secondary,),
+        icon: Icon(Icons.add, color: Theme.of(context).colorScheme.secondary,),
+        label: Text('Add Note', style: Theme.of(context).textTheme.labelMedium),
       ),
       body: CustomScrollView(
         slivers: [
