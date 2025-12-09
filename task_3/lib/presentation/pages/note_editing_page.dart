@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:task_3/data/db/database.dart';
 
 import '../../core/colors/colors_list.dart';
+import '../../core/network/connectivity_bloc.dart';
 import '../cubits/notes_cubit.dart';
 
 class NoteEditingPage extends StatefulWidget {
@@ -50,175 +51,180 @@ class _NoteEditingPageState extends State<NoteEditingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.secondary),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          if(isNew) Container(
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onTertiary,
-              borderRadius: BorderRadius.circular(8),
+    return BlocBuilder<ConnectivityBloc, ConnectivityState>(
+      builder: (context, state) {
+        bool isConnected = state is ConnectivityOnline;
+        return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.surface,
+            elevation: 0,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Theme.of(context).colorScheme.secondary),
+              onPressed: () => Navigator.pop(context),
             ),
-            child: IconButton(
-              visualDensity: VisualDensity.compact,
-              icon: Icon(Icons.save, color: Theme.of(context).colorScheme.secondary),
-              onPressed: () {
-                if(formKey.currentState!.validate()) {
-                  context.read<NotesCubit>().addNote(_titleController.text, _contentController.text, _selectedColorIndex);
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ),
-          if(!isNew) Container(
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onTertiary,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: IconButton(
-              visualDensity: VisualDensity.compact,
-              icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.secondary),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: Text('Delete Note'),
-                      content: Text('Are you sure you want to delete this note?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Cancel'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            context.read<NotesCubit>().deleteNote(widget.note!.id);
-                            Navigator.pop(context);
-                            Navigator.pop(context);
-                          },
-                          child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error),),
-                        ),
-                      ]
-                    );
-                  }
-                );
-              },
-            ),
-          ),
-          if(!isNew) Container(
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onTertiary,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: IconButton(
-              visualDensity: VisualDensity.compact,
-              icon: Icon(Icons.check, color: Theme.of(context).colorScheme.secondary),
-              onPressed: () {
-                if(formKey.currentState!.validate()) {
-                  context.read<NotesCubit>().updateNote(widget.note!.id, _titleController.text, _contentController.text, _selectedColorIndex);
-                  Navigator.pop(context);
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TextFormField(
-                  controller: _titleController,
-                  style: Theme.of(context).textTheme.titleLarge,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a title';
+            actions: [
+              if(isNew) Container(
+                margin: const EdgeInsets.only(right: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onTertiary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(Icons.save, color: Theme.of(context).colorScheme.secondary),
+                  onPressed: () {
+                    if(formKey.currentState!.validate()) {
+                      context.read<NotesCubit>().addNote(_titleController.text, _contentController.text, _selectedColorIndex, isConnected);
+                      Navigator.pop(context);
                     }
-                    return null;
                   },
-                  decoration: InputDecoration(
-                    hintText: 'Title',
-                    hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onError),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                  ),
                 ),
-                const SizedBox(height: 24),
-
-                Text(
-                  'COLOR',
-                  style: Theme.of(context).textTheme.labelMedium,
+              ),
+              if(!isNew) Container(
+                margin: const EdgeInsets.only(right: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onTertiary,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                const SizedBox(height: 12),
-
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: List.generate(_colors.length, (index) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedColorIndex = index;
-                        });
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.secondary),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Delete Note'),
+                          content: Text('Are you sure you want to delete this note?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                context.read<NotesCubit>().deleteNote(widget.note!.id);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                              child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error),),
+                            ),
+                          ]
+                        );
+                      }
+                    );
+                  },
+                ),
+              ),
+              if(!isNew) Container(
+                margin: const EdgeInsets.only(right: 16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onTertiary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(Icons.check, color: Theme.of(context).colorScheme.secondary),
+                  onPressed: () {
+                    if(formKey.currentState!.validate()) {
+                      context.read<NotesCubit>().updateNote(widget.note!.id, _titleController.text, _contentController.text, _selectedColorIndex, widget.note!.status, isConnected);
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _titleController,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter a title';
+                        }
+                        return null;
                       },
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: _colors[index],
-                          shape: BoxShape.circle,
-                          border:Border.all(color: Theme.of(context).colorScheme.secondary, width: 0.5),
-                        ),
-                        child: _selectedColorIndex == index
-                            ? Icon(
-                          Icons.check,
-                          color: Theme.of(context).colorScheme.secondary,
-                          size: 20,
-                        )
-                            : null,
+                      decoration: InputDecoration(
+                        hintText: 'Title',
+                        hintStyle: Theme.of(context).textTheme.titleLarge?.copyWith(color: Theme.of(context).colorScheme.onError),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
                       ),
-                    );
-                  }),
+                    ),
+                    const SizedBox(height: 24),
+
+                    Text(
+                      'COLOR',
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    const SizedBox(height: 12),
+
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List.generate(_colors.length, (index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedColorIndex = index;
+                            });
+                          },
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: _colors[index],
+                              shape: BoxShape.circle,
+                              border:Border.all(color: Theme.of(context).colorScheme.secondary, width: 0.5),
+                            ),
+                            child: _selectedColorIndex == index
+                                ? Icon(
+                              Icons.check,
+                              color: Theme.of(context).colorScheme.secondary,
+                              size: 20,
+                            )
+                                : null,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 24),
+                    TextFormField(
+                      controller: _contentController,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter some content';
+                        }
+                        return null;
+                      },
+                      maxLines: null,
+                      keyboardType: TextInputType.multiline,
+                      decoration: InputDecoration(
+                        hintText: 'Start typing...',
+                        hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onError),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                TextFormField(
-                  controller: _contentController,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some content';
-                    }
-                    return null;
-                  },
-                  maxLines: null,
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
-                    hintText: 'Start typing...',
-                    hintStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Theme.of(context).colorScheme.onError),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      }
     );
   }
 }

@@ -4,6 +4,8 @@ import 'package:task_3/core/theme/theme_cubit.dart';
 import 'package:task_3/presentation/cubits/notes_cubit.dart';
 import 'package:task_3/presentation/pages/notes_page.dart';
 
+import 'core/network/connectivity_bloc.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -12,13 +14,13 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => ThemeCubit()),
         BlocProvider(create: (context) => NotesCubit()),
+        BlocProvider(create: (context) => ConnectivityBloc()),
       ],
       child: BlocBuilder<ThemeCubit, ThemeData>(
         builder: (context, theme) {

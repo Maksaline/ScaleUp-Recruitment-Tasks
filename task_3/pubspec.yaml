@@ -41,6 +41,7 @@ dependencies:
   drift_flutter: ^0.2.8
   path_provider: ^2.1.5
   equatable: ^2.0.7
+  connectivity_plus: ^7.0.0
 
 dev_dependencies:
   flutter_test:
