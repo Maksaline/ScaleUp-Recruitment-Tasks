@@ -65,11 +65,13 @@ class NotesCubit extends Cubit<NotesState> {
           });
       if(response.statusCode == 200) {
         syncStatus = 1;
-      } else if (syncStatus != 0){
-        syncStatus = 2;
       } else {
         syncStatus = 0;
       }
+    } else if(status != 0){
+      syncStatus = 2;
+    } else {
+      syncStatus = 0;
     }
 
     await db.managers.noteItems
@@ -79,33 +81,40 @@ class NotesCubit extends Cubit<NotesState> {
   }
 
   void updateOnNetwork() async {
-    List<NoteItem> notes = await db.managers.noteItems.filter((f) => f.status.equals(0)).get();
+    List<NoteItem> notes = await db.managers.noteItems.filter((f) => f.status.equals(0) | f.status.equals(2)).get();
+    emit(NotesSyncing(notes: notes));
 
     for(NoteItem note in notes) {
       int syncStatus = 0;
-      if(note.status == 0) {
-        final response = await dio.post('https://jsonplaceholder.typicode.com/posts',
-            data: {
-              'title': note.title,
-              'body': note.content,
-              'userId': 11
-            });
-        if(response.statusCode == 201) {
-          syncStatus = 1;
+      try {
+        if(note.status == 0) {
+          final response = await dio.post('https://jsonplaceholder.typicode.com/posts',
+              data: {
+                'title': note.title,
+                'body': note.content,
+                'userId': 11
+              });
+          if(response.statusCode == 201) {
+            syncStatus = 1;
+          }
+        } else if (note.status == 2) {
+          final response = await dio.put('https://jsonplaceholder.typicode.com/posts/1',  //fake id
+              data: {
+                'title': note.title,
+                'body': note.content,
+                'userId': 11,
+              });
+          print(response.statusCode);
+          if(response.statusCode == 200) {
+            syncStatus = 1;
+          }
         }
-      } else if (note.status == 2) {
-        final response = await dio.put('https://jsonplaceholder.typicode.com/posts/${note.id}',
-            data: {
-              'title': note.title,
-              'body': note.content,
-              'userId': 11,
-            });
-        if(response.statusCode == 200) {
-          syncStatus = 1;
-        }
+      } catch (e) {
+        syncStatus = 0;
       }
       await db.managers.noteItems.filter((f) => f.id.equals(note.id)).update((u) => u(status: Value(syncStatus)));
     }
+    print('done');
     fetchNotes();
   }
 }

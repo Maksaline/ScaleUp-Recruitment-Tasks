@@ -16,6 +16,13 @@ class NotesLoaded extends NotesState {
   NotesLoaded({required this.notes});
 }
 
+class NotesSyncing extends NotesState {
+  final List<NoteItem> notes;
+
+  NotesSyncing({required this.notes});
+}
+
+
 class NotesError extends NotesState {
   final String message;
 
