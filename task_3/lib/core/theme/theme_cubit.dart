@@ -10,7 +10,7 @@ class ThemeCubit extends Cubit<ThemeData> {
   static const Color primaryColor = Color(0xFF2563EB);
 
   // Derived shades for primary color
-  static const Color primaryLight = Color(0xFFBFF4B7);
+  static const Color primaryLight = Color(0xFF3d78f5);
   static const Color primaryDark = Color(0xFF78C96D);
 
   // Accent colors that complement the primary green
@@ -53,11 +53,11 @@ class ThemeCubit extends Cubit<ThemeData> {
     return !isDark ? ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
-      primaryColor: primaryColor,
+      primaryColor: primaryLight,
       scaffoldBackgroundColor: surfaceLight,
       colorScheme: ColorScheme(
         brightness: Brightness.light,
-        primary: primaryColor,
+        primary: primaryLight,
         onPrimary: Colors.white,
         secondary: Colors.black,
         onSecondary: Colors.white,

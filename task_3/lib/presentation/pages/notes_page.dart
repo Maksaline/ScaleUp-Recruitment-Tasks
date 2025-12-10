@@ -24,127 +24,132 @@ class _NotesPageState extends State<NotesPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => NoteEditingPage()),
-          );
-        },
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        icon: Icon(Icons.add, color: Theme.of(context).colorScheme.secondary,),
-        label: Text('Add Note', style: Theme.of(context).textTheme.labelMedium),
-      ),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            expandedHeight: 100,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(' Notes', style: Theme.of(context).textTheme.headlineMedium,),
-                BlocBuilder<NotesCubit, NotesState>(
-                  builder: (context, notesState) {
-                    return Row(
-                      children: [
-                        if(notesState is NotesSyncing)
-                          IconButton(
-                            icon:  Icon(Icons.sync, color: Theme.of(context).colorScheme.secondary,),
-                            onPressed: () {
-                              context.read<NotesCubit>().fetchNotes();
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<NotesCubit>().fetchNotes();
+      },
+      child: Scaffold(
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => NoteEditingPage()),
+            );
+          },
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          icon: Icon(Icons.add, color: Theme.of(context).colorScheme.secondary,),
+          label: Text('Add Note', style: Theme.of(context).textTheme.labelMedium),
+        ),
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 100,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(' Notes', style: Theme.of(context).textTheme.headlineMedium,),
+                  BlocBuilder<NotesCubit, NotesState>(
+                    builder: (context, notesState) {
+                      return Row(
+                        children: [
+                          if(notesState is NotesSyncing)
+                            IconButton(
+                              icon:  Icon(Icons.sync, color: Theme.of(context).colorScheme.secondary,),
+                              onPressed: () {
+                                context.read<NotesCubit>().fetchNotes();
+                              },
+                            ),
+                          SizedBox(width: 10,),
+                          BlocBuilder<ConnectivityBloc, ConnectivityState>(
+                            builder: (context, state) {
+                              return (state is ConnectivityOnline) ? Icon(Icons.wifi, color: Theme.of(context).colorScheme.secondary,)
+                                  : Icon(Icons.wifi_off, color: Theme.of(context).colorScheme.secondary,);
                             },
                           ),
-                        SizedBox(width: 10,),
-                        BlocBuilder<ConnectivityBloc, ConnectivityState>(
-                          builder: (context, state) {
-                            return (state is ConnectivityOnline) ? Icon(Icons.wifi, color: Theme.of(context).colorScheme.secondary,)
-                                : Icon(Icons.wifi_off, color: Theme.of(context).colorScheme.secondary,);
-                          },
-                        ),
-                        SizedBox(width: 10,),
-                        BlocBuilder<ThemeCubit, ThemeData>(
-                            builder: (context, theme) {
-                              return IconButton(
-                                onPressed: () {
-                                  context.read<ThemeCubit>().toggleTheme();
-                                },
-                                icon: (theme.brightness == Brightness.light) ? Icon(Icons.dark_mode) : Icon(Icons.light_mode),
-                                color: Theme.of(context).colorScheme.secondary,
-                              );
-                            }
-                        ),
-                      ],
-                    );
-                  }
-                )
-              ],
-            ),
-            pinned: false,
-            floating: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(28), bottomRight: Radius.circular(28),),
-                ),
-                padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Flexible(child: Text('Manage your notes in a organized way with beautiful colors.', style: Theme.of(context).textTheme.labelMedium,)),
-                  ],
+                          SizedBox(width: 10,),
+                          BlocBuilder<ThemeCubit, ThemeData>(
+                              builder: (context, theme) {
+                                return IconButton(
+                                  onPressed: () {
+                                    context.read<ThemeCubit>().toggleTheme();
+                                  },
+                                  icon: (theme.brightness == Brightness.light) ? Icon(Icons.dark_mode) : Icon(Icons.light_mode),
+                                  color: Theme.of(context).colorScheme.secondary,
+                                );
+                              }
+                          ),
+                        ],
+                      );
+                    }
+                  )
+                ],
+              ),
+              pinned: false,
+              floating: true,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(28), bottomRight: Radius.circular(28),),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(child: Text('Manage your notes in a organized way with beautiful colors.', style: Theme.of(context).textTheme.labelMedium,)),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: BlocListener<ConnectivityBloc, ConnectivityState>(
-              listener: (context, state) {
-                if(state is ConnectivityOnline) {
-                  context.read<NotesCubit>().updateOnNetwork();
-                }
-              },
-              child: BlocBuilder<NotesCubit, NotesState>(
-                  builder: (context, state) {
-                    if(state is NotesEmpty) {
-                      return SizedBox(
-                        height: MediaQuery.of(context).size.height - 200,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(Icons.note_add_outlined, size: 100, color: Theme.of(context).colorScheme.secondary),
-                            SizedBox(height: 10,),
-                            Text('No notes yet', style: Theme.of(context).textTheme.headlineSmall),
-                            SizedBox(height: 10,),
-                            Text('Add a new note to get started', style: Theme.of(context).textTheme.labelMedium),
-                          ]
-                        ),
-                      );
-                    } else if(state is NotesLoading) {
-                      return SizedBox(
-                          height: MediaQuery.of(context).size.height - 200,
-                          child: Center(child: CircularProgressIndicator())
-                      );
-                    } else if(state is NotesLoaded) {
-                      ColorList colors = ColorList();
-                      return buildNotesGridView(state.notes, colors);
-                    } else if (state is NotesSyncing) {
-                      ColorList colors = ColorList();
-                      return buildNotesGridView(state.notes, colors);
-                    }
-                    else {
-                      return Center(
-                        child: Text('Something went wrong'),
-                      );
-                    }
+            SliverToBoxAdapter(
+              child: BlocListener<ConnectivityBloc, ConnectivityState>(
+                listener: (context, state) {
+                  if(state is ConnectivityOnline) {
+                    context.read<NotesCubit>().updateOnNetwork();
                   }
-                )
+                },
+                child: BlocBuilder<NotesCubit, NotesState>(
+                    builder: (context, state) {
+                      if(state is NotesEmpty) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height - 200,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.note_add_outlined, size: 100, color: Theme.of(context).colorScheme.secondary),
+                              SizedBox(height: 10,),
+                              Text('No notes yet', style: Theme.of(context).textTheme.headlineSmall),
+                              SizedBox(height: 10,),
+                              Text('Add a new note to get started', style: Theme.of(context).textTheme.labelMedium),
+                            ]
+                          ),
+                        );
+                      } else if(state is NotesLoading) {
+                        return SizedBox(
+                            height: MediaQuery.of(context).size.height - 200,
+                            child: Center(child: CircularProgressIndicator())
+                        );
+                      } else if(state is NotesLoaded) {
+                        ColorList colors = ColorList();
+                        return buildNotesGridView(state.notes, colors);
+                      } else if (state is NotesSyncing) {
+                        ColorList colors = ColorList();
+                        return buildNotesGridView(state.notes, colors);
+                      }
+                      else {
+                        return Center(
+                          child: Text('Something went wrong'),
+                        );
+                      }
+                    }
+                  )
+              )
             )
-          )
-        ]
+          ]
+        ),
       ),
     );
   }
