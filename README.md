@@ -64,6 +64,7 @@ Create a Note-Taking App with Offline Sync
 
 ### Key Considerations
 - Completed with bonus features
+- Built connectivity stream and auto sync when returning online
 - Used Drift for local database
 - Didn't fully used Data, Domain, Presentation layer as I used Bloc
 - Bloc handled all necessary clean architecture, so tried to avoid any overhead
