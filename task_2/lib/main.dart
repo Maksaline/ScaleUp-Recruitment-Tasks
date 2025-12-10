@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme(
             brightness: Brightness.light,
-            primary: Color(0xFF4F46E5),
+            primary: Color(0xFFC67C4E),
             onPrimary: Colors.black,
             secondary: Colors.white,
             onSecondary: Color(0xFFF6F6F6),
@@ -35,44 +35,20 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
           textTheme: TextTheme(
-            displayLarge: GoogleFonts.poppins(
-              color: textDark,
-              fontWeight: FontWeight.bold,
-            ),
-            displayMedium: GoogleFonts.poppins(
-              color: textDark,
-              fontWeight: FontWeight.bold,
-            ),
-            displaySmall: GoogleFonts.poppins(
-              color: textDark,
-              fontWeight: FontWeight.bold,
-            ),
-            headlineLarge: GoogleFonts.poppins(
-              color: textDark,
-              fontWeight: FontWeight.w600,
-            ),
-            headlineMedium: GoogleFonts.poppins(
-              color: textDark,
-              fontWeight: FontWeight.bold,
-            ),
+            displayLarge: GoogleFonts.poppins(color: textDark, fontWeight: FontWeight.bold,),
+            displayMedium: GoogleFonts.poppins(color: textDark, fontWeight: FontWeight.bold,),
+            displaySmall: GoogleFonts.poppins(color: textDark, fontWeight: FontWeight.bold,),
+            headlineLarge: GoogleFonts.poppins(color: textDark, fontWeight: FontWeight.w600,),
+            headlineMedium: GoogleFonts.poppins(color: textDark, fontWeight: FontWeight.bold,),
             headlineSmall: GoogleFonts.poppins(color: textDark),
-            titleLarge: GoogleFonts.poppins(
-              color: textDark,
-              fontWeight: FontWeight.w600,
-            ),
+            titleLarge: GoogleFonts.poppins(color: textDark, fontWeight: FontWeight.w600,),
             titleMedium: GoogleFonts.poppins(color: textDark),
             titleSmall: GoogleFonts.poppins(color: textDark),
             bodyLarge: GoogleFonts.poppins(color: textDark),
             bodyMedium: GoogleFonts.poppins(color: textMedium),
             bodySmall: GoogleFonts.poppins(color: textMedium),
-            labelLarge: GoogleFonts.poppins(
-              color: textDark,
-              fontWeight: FontWeight.w500,
-            ),
-            labelMedium: GoogleFonts.poppins(
-              color: textDark,
-              fontWeight: FontWeight.w500,
-            ),
+            labelLarge: GoogleFonts.poppins(color: textDark, fontWeight: FontWeight.w500,),
+            labelMedium: GoogleFonts.poppins(color: textDark, fontWeight: FontWeight.w500,),
             labelSmall: GoogleFonts.poppins(color: textMedium),
           ),
         ),

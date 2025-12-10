@@ -30,7 +30,11 @@ class ProductCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                   child: isLoading
                       ? Container(color: Colors.grey[300])
-                      : Image.network(product.image, fit: BoxFit.contain, width: double.infinity),
+                      :
+                  Hero(
+                    tag: 'product-${product.id}',
+                    child: Image.network(product.image, fit: BoxFit.contain, width: double.infinity)
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -47,7 +51,7 @@ class ProductCard extends StatelessWidget {
                   const SizedBox(width: 4),
                   Text(product.rating.toString(), style: Theme.of(context).textTheme.labelSmall),
                   const SizedBox(width: 4),
-                  Text('(${product.count})', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
+                  Text('(${product.count})', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black45)),
                 ],
               ),
               const SizedBox(height: 8),
@@ -56,7 +60,7 @@ class ProductCard extends StatelessWidget {
                 children: [
                   Text(
                     '\$${product.price}',
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   CircleAvatar(
                     radius: 15,

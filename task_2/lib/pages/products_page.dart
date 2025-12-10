@@ -5,6 +5,7 @@ import 'package:task_2/pages/widgets/products_card.dart';
 
 import '../cubits/products_cubit.dart';
 import '../models/product.dart';
+import 'product_detail_page.dart';
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -182,9 +183,9 @@ class _ProductsPageState extends State<ProductsPage> {
                                             ),
                                             backgroundColor: selectedIndex == index
                                                 ? Theme.of(context).colorScheme.primary
-                                                : Theme.of(context).colorScheme.surface,
+                                                : Theme.of(context).colorScheme.secondary,
                                             side: BorderSide(
-                                              color: Theme.of(context).colorScheme.outline,
+                                              color: Colors.grey,
                                               width: 0.2
                                             ),
                                           ),
@@ -217,9 +218,19 @@ class _ProductsPageState extends State<ProductsPage> {
 
                                     final product = isLoading ? dummyProduct : products[index];
 
-                                    return ProductCard(
-                                      product: product,
-                                      isLoading: isLoading,
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => ProductDetailPage(product: product),
+                                          ),
+                                        );
+                                      },
+                                      child: ProductCard(
+                                        product: product,
+                                        isLoading: isLoading,
+                                      ),
                                     );
                                   },
                                 ),
