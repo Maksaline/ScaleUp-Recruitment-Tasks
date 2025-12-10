@@ -21,6 +21,7 @@ This repository contains 4 Flutter app development tasks that were given to me t
 - I didn't implement any performance feature as this was not a evaluation criteria
 - I didn't use cached image
 - There wasn't any need for paraller processing
+- Didn't add any launcher icon nor splash screen
 
 ---
 
