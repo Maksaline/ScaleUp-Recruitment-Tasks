@@ -2,7 +2,7 @@
 
 
 ## Overview
-This repository contains 4 Flutter app development tasks that were given to me to asses my flutter skill by ScaleUp Ads Agency.
+This repository contains 4 Flutter app development tasks that were given to me to assess my flutter skill by ScaleUp Ads Agency.
 
 ## Repository Structure
 ```
@@ -15,7 +15,7 @@ This repository contains 4 Flutter app development tasks that were given to me t
 ```
 
 ## Implemented
-I succesfully completed all the tasks with bonus features maintaing clean and modern UI
+**I succesfully completed all the tasks with bonus features maintaing clean and modern UI**
 
 ## Things I Avoided
 - I didn't implement any performance feature as this was not a evaluation criteria
@@ -102,4 +102,4 @@ Food Classification Using Camera and TFLite
 **Md. Maksaline Haque Sajib**
 - GitHub: [@Maksaline](https://github.com/Maksaline)
 - Portfolio: [Maksaline.com](https://maksaline.com/)
-- Email: your.sajib19285@gmail.com
+- Email: sajib19285@gmail.com
