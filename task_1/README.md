@@ -1,5 +1,8 @@
 # task_1
 
-ScaleUP ads agency - Recruitment task. Task 1 - Design a Login Screen with Validation.
+Login Screen with Validation.
 
 
+### Key Considerations
+- I used ScaleUp Ads Agency's logo and used the colors from that logo
+- Email TextFormField notifies if the provided email is valid or not with a suffix icon.

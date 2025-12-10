@@ -15,7 +15,7 @@ This repository contains 4 Flutter app development tasks that were given to me t
 ```
 
 ## Implemented
-**I succesfully completed all the tasks with bonus features maintaing clean and modern UI**
+- **I succesfully completed all the tasks with bonus features maintaing clean and modern UI**
 
 ## Things I Avoided
 - I didn't implement any performance feature as this was not a evaluation criteria
