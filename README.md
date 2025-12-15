@@ -105,3 +105,8 @@ Food Classification Using Camera and TFLite
 - GitHub: [@Maksaline](https://github.com/Maksaline)
 - Portfolio: [Maksaline.com](https://maksaline.com/)
 - Email: sajib19285@gmail.com
+
+---
+
+## Update
+I got selected for the Jr. Mobile App Developer position at Betopia Group.☺️
